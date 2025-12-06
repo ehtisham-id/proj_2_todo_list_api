@@ -1,0 +1,18 @@
+directive @auth on FIELD_DEFINITION
+
+type Query {
+  me: User @auth
+  todos: [Todo!] @auth
+  todo(id: ID!): Todo @auth
+}
+
+type Mutation {
+
+    register(input: RegisterInput!): Message
+    login(input: LoginInput!): AuthPayload
+    refreshToken(token: String!): AuthPayload
+    
+    createTodo(input: CreateTodoInput!): Todo @auth
+    updateTodo(id: ID!, input: UpdateTodoInput!): Todo @auth
+    deleteTodo(id: ID!): Message @auth
+}
