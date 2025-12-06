@@ -152,8 +152,6 @@ NODE_ENV=development
 
 # Database
 MONGODB_URI=mongodb://localhost:27017/todo-list
-# Or use MongoDB Atlas
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/todo-list
 
 # JWT Configuration
 JWT_SECRET=your_jwt_secret_key_here
