@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const pino = require('pino');
+import {mongoose} from 'mongoose';
+import { pino } from 'pino';
 
 const logger = pino();
 
@@ -13,4 +13,4 @@ const connectDB = async () => {
     }
 }
 
-module.exports = connectDB;
+export default connectDB;

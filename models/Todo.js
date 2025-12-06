@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const todoSchema = new mongoose.Schema({
     user: {
@@ -32,4 +32,4 @@ todoSchema.virtual("isOverdue").get(function () {
 })
 
 const Todo = mongoose.model('Todo', todoSchema);
-module.exports = Todo;
+export default Todo;

@@ -1,8 +1,8 @@
-const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const  RefreshToken  = require("../models/RefreshToken.js");
-const { tokenService } = require("./tokenService.js");
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import  RefreshToken  from "../models/RefreshToken.js";
+import { tokenService } from "./token.service.js";
 
 const { JWT_REFRESH_SECRET } = process.env;
 

@@ -1,12 +1,12 @@
-const request = require("supertest");
-const express = require("express");
-const bodyParser = require("body-parser");
-const { ApolloServer } = require("@apollo/server");
-const { expressMiddleware } = require("@apollo/server/express4");
-const jwt = require("jsonwebtoken");
+import request from "supertest";
+import express from "express";
+import bodyParser from "body-parser";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/standalone";
+import jwt from "jsonwebtoken";
 
-const { schema } = require("../src/graphql/schema");
-const db = require("./setup");
+import { schema } from "../src/graphql/schema";
+import db from "./setup";
 
 let app;
 let server;
@@ -32,7 +32,7 @@ beforeAll(async () => {
           try {
             const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET || "testsecret");
             user = { id: decoded.userId };
-          } catch {}
+          } catch { }
         }
         return { user };
       },

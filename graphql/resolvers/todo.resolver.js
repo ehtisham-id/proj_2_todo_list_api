@@ -1,4 +1,4 @@
-const { todoService } = require("../../services/todo.service");
+import { todoService } from "../../services/todo.service.js";
 
 export const todoResolver = {
   Query: {

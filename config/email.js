@@ -1,5 +1,5 @@
-const nodemailer = require('nodemailer');
-const pino = require('pino');
+import { nodemailer } from 'nodemailer';
+import { pino } from 'pino';
 
 const logger = pino();
 

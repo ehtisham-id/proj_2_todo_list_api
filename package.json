@@ -4,11 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "dev": "nodemon ./bin/www",
     "test": "jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "@apollo/server": "^5.2.0",
+    "@as-integrations/express4": "^1.1.2",
     "appolo": "^5.0.9",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.1",

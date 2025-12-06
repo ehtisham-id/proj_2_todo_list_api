@@ -1,4 +1,4 @@
-const Todo = require('../models/Todo');
+import Todo from '../models/Todo.js';
 
 export const todoService = {
     getAll: async (userId) => {

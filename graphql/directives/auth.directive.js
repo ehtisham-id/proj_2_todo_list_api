@@ -1,4 +1,4 @@
-const { mapSchema, getDirective, MapperKind } = require('@graphql-tools/utils');
+import { mapSchema, getDirective, MapperKind } from '@graphql-tools/utils';
 
 export const authDirective = `
     directive @auth on FIELD_DEFINITION

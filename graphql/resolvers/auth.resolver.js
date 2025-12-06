@@ -1,4 +1,4 @@
-const { authService } = require("../../services");
+import { authService } from "../../services/auth.service.js";;
 
 export const authResolver = {
   Mutation: {

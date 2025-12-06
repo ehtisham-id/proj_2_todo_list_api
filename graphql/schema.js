@@ -1,17 +1,19 @@
-const { makeExecutableSchema } = require("@graphql-tools/schema");
-const fs = require("fs");
-const path = require("path");
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const { authDirective, authDirectiveTransformer } = require("./directives/authDirective");
-const { authResolver } = require("./resolvers/authResolver");
-const { todoResolver } = require("./resolvers/todoResolver");
-const { userResolver } = require("./resolvers/userResolver");
-
+import { authDirective, authDirectiveTransformer } from "./directives/auth.directive.js";
+import { authResolver } from "./resolvers/auth.resolver.js";
+import { todoResolver } from "./resolvers/todo.resolver.js";
+import { userResolver } from "./resolvers/user.resolver.js";
+import { ApolloServer } from "@apollo/server";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const loadGQL = (file) => fs.readFileSync(path.join(__dirname, "typeDefs", file), "utf-8");
+const loadGQL = (file) =>
+  fs.readFileSync(path.join(__dirname, "typeDef", file), "utf8");
 
 const typeDefs = [
   loadGQL("root.gql"),

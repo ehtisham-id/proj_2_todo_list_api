@@ -1,6 +1,6 @@
 import { Query } from 'mongoose';
 
-const User = require('../../models/User');
+import User from '../../models/User.js';
 
 export const userResolver = {
     Query: {
