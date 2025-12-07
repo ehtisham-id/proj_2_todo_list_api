@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import pino from 'pino';
+import Todo from './Todo.js';
+import RefreshToken from './RefreshToken.js';
 
 const logger = pino();
 
@@ -40,21 +42,27 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
 
     logger.info(`Password hashed successfully`);
-    next;
+    next();
 })
 
-// CASCADE DELETE
-userSchema.pre("remove", async function (next) {
+// CASCADE DELETE: runs when calling userDoc.deleteOne()
+userSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
     try {
-        // Delete all todos belonging to this user
         await Todo.deleteMany({ user: this._id });
-
-        // Delete all refresh tokens belonging to this user
         await RefreshToken.deleteMany({ user: this._id });
-
-        next;
+        next();
     } catch (err) {
-        next;
+        next(err);
+    }
+});
+
+userSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
+    try {
+        await Todo.deleteMany({ user: this._id });
+        await RefreshToken.deleteMany({ user: this._id });
+        next();
+    } catch (err) {
+        next(err);
     }
 });
 
