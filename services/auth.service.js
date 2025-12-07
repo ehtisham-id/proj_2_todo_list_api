@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import  RefreshToken  from "../models/RefreshToken.js";
+import RefreshToken from "../models/RefreshToken.js";
 import { tokenService } from "./token.service.js";
 import pino from 'pino';
 
@@ -39,7 +39,7 @@ export const authService = {
       token: refreshToken,
       expiresAt: tokenService.getRefreshTokenExpiryDate(),
     });
-  
+
     return {
       accessToken,
       refreshToken,
@@ -50,6 +50,12 @@ export const authService = {
   refreshAccessToken: async (token) => {
     const storedToken = await RefreshToken.findOne({ token });
     if (!storedToken) throw new Error("Invalid refresh token");
+
+    // Explicit expiry guard even though TTL index should clean up
+    if (storedToken.expiresAt <= new Date()) {
+      await storedToken.deleteOne();
+      throw new Error("Refresh token expired");
+    }
 
     let payload;
     try {
