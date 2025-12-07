@@ -14,17 +14,15 @@ A full-featured Todo List application built with **Express.js**, **GraphQL**, **
 - [API Documentation](#api-documentation)
 - [Authentication](#authentication)
 - [Models](#models)
-- [Testing](#testing)
 - [Project Scripts](#project-scripts)
 
 ## 🎯 Overview
 
-This is a backend tutorial project (Proj_2) that implements a complete Todo List API with user authentication, JWT-based authorization, and GraphQL endpoints. The application uses MongoDB for data persistence and keeps a placeholder hook for email verification tokens.
+This is a backend tutorial project (Project no 2) that implements a complete Todo List API with user authentication, JWT-based authorization, and GraphQL endpoints. The application uses MongoDB for data persistence and keeps a placeholder hook for email verification tokens.
 
 ## ✨ Features
 
 - **User Authentication**: Registration and login with secure password hashing using bcrypt
-- **Email Verification (placeholder)**: Verification token generated on registration; email sending is not wired yet
 - **JWT Authentication**: Token-based authorization for protected endpoints
 - **GraphQL API**: Modern GraphQL schema with queries and mutations
 - **Todo Management**: Create, read, update, and delete todos
@@ -32,7 +30,6 @@ This is a backend tutorial project (Proj_2) that implements a complete Todo List
 - **Express Session Management**: Session handling with flash messages
 - **CORS Support**: Cross-Origin Resource Sharing enabled
 - **Error Handling**: Comprehensive error handling and logging with Pino
-- **Testing**: Jest and Supertest for unit and integration testing
 
 ## 🛠️ Tech Stack
 
@@ -49,18 +46,11 @@ This is a backend tutorial project (Proj_2) that implements a complete Todo List
 - **Session**: express-session (v1.18.2)
 
 ### Additional Libraries
-- **Email**: nodemailer (v7.0.11) — currently unused
 - **Logging**: Pino (v10.1.0)
 - **Environment**: dotenv (v17.2.3)
 - **View Engine**: EJS (v3.1.10)
 - **HTTP client**: node-fetch (v3.3.2) for server-side GraphQL calls from routes
 
-### Development & Testing
-- **Testing Framework**: Jest
-- **HTTP Testing**: Supertest
-- **In-Memory MongoDB**: mongodb-memory-server
-- **File Watching**: Nodemon
-- **TypeScript Support**: @types/jest
 
 ## 📁 Project Structure
 
@@ -69,7 +59,6 @@ Proj_2_ToDo_List_API/
 ├── .env                              # Environment variables (not in repo)
 ├── config/
 │   ├── database.js                   # MongoDB connection configuration
-│   ├── email.js                      # Email service configuration
 │   └── jwt.js                        # JWT configuration
 ├── graphql/
 │   ├── schema.js                     # GraphQL schema definition
@@ -105,9 +94,6 @@ Proj_2_ToDo_List_API/
 │   ├── login.ejs                     # Login page template
 │   ├── register.ejs                  # Registration page template
 │   └── todos.ejs                     # Todos page template
-├── test/
-│   ├── api.test.js                   # API integration tests
-│   └── setup.js                      # Test setup and configuration
 ├── TODO.md                           # Open tasks and cleanup items
 ├── app.js                            # Express app configuration & GraphQL server
 ├── package.json                      # Project dependencies and scripts
@@ -165,11 +151,6 @@ JWT_REFRESH_EXPIRY=7d
 # Session
 SESSION_SECRET=your_session_secret_key_here
 
-# Email Configuration (Nodemailer - unused by default)
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@example.com
-EMAIL_PASS=your_app_password
 
 # Logging
 LOG_LEVEL=info
@@ -195,11 +176,6 @@ npm start
 ```
 Runs `node app.js`.
 
-### Test Mode
-```bash
-npm test
-```
-Runs Jest tests with open handles detection and force exit enabled.
 
 ## 📡 API Documentation
 
@@ -328,40 +304,12 @@ Authorization: Bearer <your_jwt_token_here>
 ### RefreshToken Model
 Used to manage JWT refresh tokens for enhanced security.
 
-## 🧪 Testing
-
-The project uses **Jest** for unit testing and **Supertest** for HTTP assertion.
-
-### Running Tests
-```bash
-npm test
-```
-
-### Test Files
-- **`test/api.test.js`**: Integration tests for API endpoints
-- **`test/setup.js`**: Test environment setup and configuration
-
-### Test Configuration
-- Uses `mongodb-memory-server` for in-memory MongoDB testing
-- Detects open handles and forces exit after test completion
-
 ## 📜 Project Scripts
 
 | Script | Description |
 |--------|-------------|
 | `npm start` | Start the server in development mode with Nodemon |
-| `npm test` | Run Jest tests with open handles detection |
 
-## 🌐 Middleware
-
-### Authentication Middleware (`middleware/auth.middleware.js`)
-- Validates JWT tokens from request headers
-- Extracts user information from tokens
-- Passes user context to resolvers
-
-### Validation Middleware (`middleware/validation.middleware.js`)
-- Validates request payload
-- Ensures data integrity and type safety
 
 ## 📝 License
 
