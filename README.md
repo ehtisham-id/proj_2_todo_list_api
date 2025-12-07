@@ -19,12 +19,12 @@ A full-featured Todo List application built with **Express.js**, **GraphQL**, **
 
 ## 🎯 Overview
 
-This is a backend tutorial project (Proj_2) that implements a complete Todo List API with user authentication, JWT-based authorization, email verification, and GraphQL endpoints. The application uses MongoDB for data persistence and includes middleware for validation and authentication.
+This is a backend tutorial project (Proj_2) that implements a complete Todo List API with user authentication, JWT-based authorization, and GraphQL endpoints. The application uses MongoDB for data persistence and keeps a placeholder hook for email verification tokens.
 
 ## ✨ Features
 
 - **User Authentication**: Registration and login with secure password hashing using bcrypt
-- **Email Verification**: Email-based account verification system
+- **Email Verification (placeholder)**: Verification token generated on registration; email sending is not wired yet
 - **JWT Authentication**: Token-based authorization for protected endpoints
 - **GraphQL API**: Modern GraphQL schema with queries and mutations
 - **Todo Management**: Create, read, update, and delete todos
@@ -49,12 +49,11 @@ This is a backend tutorial project (Proj_2) that implements a complete Todo List
 - **Session**: express-session (v1.18.2)
 
 ### Additional Libraries
-- **Email**: nodemailer (v7.0.11)
+- **Email**: nodemailer (v7.0.11) — currently unused
 - **Logging**: Pino (v10.1.0)
 - **Environment**: dotenv (v17.2.3)
 - **View Engine**: EJS (v3.1.10)
-- **Body Parsing**: body-parser (v2.2.1)
-- **Middleware**: morgan (v1.10.1), connect-flash (v0.1.1)
+- **HTTP client**: node-fetch (v3.3.2) for server-side GraphQL calls from routes
 
 ### Development & Testing
 - **Testing Framework**: Jest
@@ -67,8 +66,7 @@ This is a backend tutorial project (Proj_2) that implements a complete Todo List
 
 ```
 Proj_2_ToDo_List_API/
-├── bin/
-│   └── www                           # Application entry point
+├── .env                              # Environment variables (not in repo)
 ├── config/
 │   ├── database.js                   # MongoDB connection configuration
 │   ├── email.js                      # Email service configuration
@@ -86,13 +84,12 @@ Proj_2_ToDo_List_API/
 │       ├── root.gql                  # Root schema definitions
 │       ├── todo.gql                  # Todo type definitions
 │       └── user.gql                  # User type definitions
-├── middleware/
-│   ├── auth.middleware.js            # JWT authentication middleware
-│   └── validation.middleware.js      # Input validation middleware
 ├── models/
 │   ├── User.js                       # User Mongoose schema
 │   ├── Todo.js                       # Todo Mongoose schema
 │   └── RefreshToken.js               # Refresh token Mongoose schema
+├── routes/
+│   └── index.js                      # Express routes rendering EJS views and proxying GraphQL
 ├── services/
 │   ├── auth.service.js               # Authentication business logic
 │   ├── todo.service.js               # Todo business logic
@@ -111,9 +108,9 @@ Proj_2_ToDo_List_API/
 ├── test/
 │   ├── api.test.js                   # API integration tests
 │   └── setup.js                      # Test setup and configuration
-├── app.js                            # Express app configuration
+├── TODO.md                           # Open tasks and cleanup items
+├── app.js                            # Express app configuration & GraphQL server
 ├── package.json                      # Project dependencies and scripts
-├── .env                              # Environment variables (not in repo)
 └── README.md                         # This file
 ```
 
@@ -137,9 +134,15 @@ Proj_2_ToDo_List_API/
    ```
 
 3. **Install development dependencies** (for testing)
-   ```bash
-   npm install --save-dev jest supertest mongodb-memory-server @types/jest
-   ```
+  ```bash
+  npm install --save-dev jest supertest mongodb-memory-server @types/jest
+  ```
+
+4. **(Optional) Remove unused dependencies**
+  ```bash
+  npm uninstall appolo body-parser connect-flash cookie-parser cross-fetch crypto debug graphql-tools http-errors morgan nodemailer
+  ```
+  These packages are currently not used in the codebase. Keep `nodemailer` only if you plan to implement email delivery.
 
 ## ⚙️ Configuration
 
@@ -151,22 +154,22 @@ PORT=3000
 NODE_ENV=development
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/todo-list
+MONGO_URI=mongodb://localhost:27017/todo-list
 
 # JWT Configuration
-JWT_SECRET=your_jwt_secret_key_here
-JWT_EXPIRE=24h
-REFRESH_TOKEN_SECRET=your_refresh_token_secret_key_here
-REFRESH_TOKEN_EXPIRE=7d
+JWT_ACCESS_SECRET=your_jwt_access_secret
+JWT_ACCESS_EXPIRY=24h
+JWT_REFRESH_SECRET=your_jwt_refresh_secret
+JWT_REFRESH_EXPIRY=7d
 
 # Session
 SESSION_SECRET=your_session_secret_key_here
 
-# Email Configuration (Nodemailer)
-EMAIL_SERVICE=gmail
-EMAIL_USER=your_email@gmail.com
+# Email Configuration (Nodemailer - unused by default)
+EMAIL_HOST=smtp.example.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@example.com
 EMAIL_PASS=your_app_password
-EMAIL_FROM=noreply@todoapp.com
 
 # Logging
 LOG_LEVEL=info
@@ -180,11 +183,17 @@ LOG_LEVEL=info
 
 ## 🚀 Running the Project
 
-### Development Mode
+### Development Mode (with reload)
+```bash
+npm run dev
+```
+Uses nodemon for auto-restart on changes.
+
+### Production/Basic Run
 ```bash
 npm start
 ```
-The application will start on `http://localhost:3000` with automatic restart on file changes (powered by Nodemon).
+Runs `node app.js`.
 
 ### Test Mode
 ```bash

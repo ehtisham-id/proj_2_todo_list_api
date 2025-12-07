@@ -1,22 +1,678 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Todos</title>
-  <link rel="stylesheet" href="/stylesheets/style.css" />
+  <meta charset="UTF-8">
+  <title>My Todos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+
+    /* Header Styles */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-name {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: white;
+      color: #667eea;
+    }
+
+    /* Messages */
+    .message {
+      margin: 20px 40px;
+      padding: 15px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #e74c3c;
+      border: 1px solid #f5c6cb;
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Create Todo Form */
+    .create-todo-section {
+      background: #f8f9fa;
+      padding: 30px;
+      border-radius: 15px;
+    }
+
+    .create-todo-section h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Todos List */
+    .todos-section {
+      background: white;
+    }
+
+    .todos-section h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .todo-count {
+      background: #667eea;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* Todo Items */
+    .todos-list {
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .todo-item {
+      background: white;
+      border: 2px solid #f0f0f0;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .todo-item:hover {
+      border-color: #667eea;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+    }
+
+    .todo-item.completed {
+      opacity: 0.7;
+      border-color: #28a745;
+    }
+
+    .todo-item.overdue {
+      border-color: #dc3545;
+    }
+
+    /* Todo Header */
+    .todo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .todo-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      flex: 1;
+      margin-right: 15px;
+    }
+
+    .todo-status {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-overdue {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Todo Description */
+    .todo-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    /* Todo Meta */
+    .todo-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 15px;
+    }
+
+    .todo-dates {
+      display: flex;
+      gap: 20px;
+    }
+
+    .date-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .date-icon {
+      font-size: 1.1rem;
+    }
+
+    /* Todo Actions */
+    .todo-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1.1rem;
+    }
+
+    .btn-edit {
+      background: #ffc107;
+      color: #212529;
+    }
+
+    .btn-edit:hover {
+      background: #e0a800;
+      transform: scale(1.1);
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #c82333;
+      transform: scale(1.1);
+    }
+
+    /* Edit Form */
+    .edit-form {
+      display: none;
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .edit-form.active {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .edit-form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn-save {
+      background: #28a745;
+      color: white;
+      padding: 8px 20px;
+    }
+
+    .btn-save:hover {
+      background: #218838;
+    }
+
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+      padding: 8px 20px;
+    }
+
+    .btn-cancel:hover {
+      background: #5a6268;
+    }
+
+    /* Checkbox */
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #495057;
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Scrollbar Styling */
+    .todos-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .todos-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .todos-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+
+    .todos-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+  </style>
 </head>
+
 <body>
   <div class="container">
-    <h1>My Todos</h1>
-    <div id="todo-list"></div>
-    <form id="todo-form">
-      <input type="text" name="title" placeholder="Todo Title" required />
-      <input type="text" name="description" placeholder="Description" />
-      <button type="submit">Add Todo</button>
-    </form>
+    <!-- Header -->
+    <div class="header">
+      <h1>📝 My Todo List</h1>
+      <div class="user-info">
+        <div class="user-name">Welcome, <strong>
+            <%= user.name %>
+          </strong>!</div>
+        <a href="/logout" class="logout-btn">Logout</a>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <% if (typeof error !=='undefined' && error) { %>
+      <div class="message error-message">
+        <%= error %>
+      </div>
+      <% } %>
+
+        <% if (typeof success !=='undefined' && success) { %>
+          <div class="message success-message">
+            <%= success %>
+          </div>
+          <% } %>
+
+            <!-- Main Content -->
+            <div class="main-content">
+              <!-- Create Todo Section -->
+              <div class="create-todo-section">
+                <h2>Create New Todo</h2>
+                <form method="POST" action="/todos">
+                  <div class="form-group">
+                    <label for="title">Title *</label>
+                    <input type="text" id="title" name="title" placeholder="What needs to be done?" required
+                      maxlength="100">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description"
+                      placeholder="Add details, notes, or instructions..."></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="dueDate">Due Date</label>
+                    <input type="date" id="dueDate" name="dueDate" min="<%= new Date().toISOString().split('T')[0] %>">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">
+                    ➕ Add Todo
+                  </button>
+                </form>
+              </div>
+
+              <!-- Todos List Section -->
+              <div class="todos-section">
+                <h2>
+                  My Todos
+                  <span class="todo-count">
+                    <%= todos.length %>
+                      <%= todos.length===1 ? 'todo' : 'todos' %>
+                  </span>
+                </h2>
+
+                <div class="todos-list">
+                  <% if (todos.length===0) { %>
+                    <div class="empty-state">
+                      <div class="empty-state-icon">📝</div>
+                      <h3>No todos yet</h3>
+                      <p>Create your first todo to get started! What's on your mind?</p>
+                    </div>
+                    <% } else { %>
+                      <% todos.forEach(todo=> {
+                        const dueDate = todo.dueDate ? new Date(todo.dueDate) : null;
+                        const today = new Date();
+                        const isOverdue = dueDate && dueDate < today && !todo.completed; const
+                          statusClass=todo.completed ? 'completed' : (isOverdue ? 'overdue' : '' ); %>
+                          <div class="todo-item <%= statusClass %>" id="todo-<%= todo.id %>">
+                            <!-- Todo Header -->
+                            <div class="todo-header">
+                              <div class="todo-title">
+                                <%= todo.title %>
+                              </div>
+                              <div
+                                class="todo-status <%= todo.completed ? 'status-completed' : (isOverdue ? 'status-overdue' : 'status-pending') %>">
+                                <%= todo.completed ? '✅ Completed' : (isOverdue ? '⚠️ Overdue' : '⏳ Pending' ) %>
+                              </div>
+                            </div>
+
+                            <!-- Todo Description -->
+                            <% if (todo.description) { %>
+                              <div class="todo-description">
+                                <%= todo.description.replace(/\n/g, '<br>' ) %>
+                              </div>
+                              <% } %>
+
+                                <!-- Todo Meta Information -->
+                                <div class="todo-meta">
+                                  <div class="todo-dates">
+                                    <% if (dueDate) { %>
+                                      <div class="date-item">
+                                        <span class="date-icon">📅</span>
+                                        <span>Due: <%= dueDate.toLocaleDateString() %></span>
+                                      </div>
+                                      <% } %>
+                                        <div class="date-item">
+                                          <span class="date-icon">🕒</span>
+                                          <span>Created: <%= new Date(todo.createdAt).toLocaleDateString() %></span>
+                                        </div>
+                                  </div>
+
+                                  <!-- Todo Actions -->
+                                  <div class="todo-actions">
+                                    <button class="btn-icon btn-edit" onclick="toggleEditForm('<%= todo.id %>')"
+                                      title="Edit todo">
+                                      ✏️
+                                    </button>
+
+                                    <form method="POST" action="/todos/<%= todo.id %>/delete" style="display: inline;"
+                                      onsubmit="return confirmDelete('<%= todo.title %>')">
+                                      <button type="submit" class="btn-icon btn-delete" title="Delete todo">
+                                        🗑️
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>
+
+                                <!-- Edit Form (Hidden by default) -->
+                                <div class="edit-form" id="edit-form-<%= todo.id %>">
+                                  <form method="POST" action="/todos/<%= todo.id %>/update">
+                                    <div class="form-group">
+                                      <label for="edit-title-<%= todo.id %>">Title</label>
+                                      <input type="text" id="edit-title-<%= todo.id %>" name="title"
+                                        value="<%= todo.title %>" required maxlength="100">
+                                    </div>
+
+                                    <div class="form-group">
+                                      <label for="edit-description-<%= todo.id %>">Description</label>
+                                      <textarea id="edit-description-<%= todo.id %>"
+                                        name="description"><%= todo.description || '' %></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                      <label for="edit-dueDate-<%= todo.id %>">Due Date</label>
+                                      <input type="date" id="edit-dueDate-<%= todo.id %>" name="dueDate"
+                                        value="<%= dueDate ? dueDate.toISOString().split('T')[0] : '' %>">
+                                    </div>
+
+                                    <!-- In the edit form section, replace the checkbox code with this: -->
+                                    <div class="checkbox-container">
+                                      <input type="checkbox" id="edit-completed-<%= todo.id %>" name="completed"
+                                        value="true" <%=todo.completed ? 'checked' : '' %>
+                                      >
+                                      <label for="edit-completed-<%= todo.id %>">Mark as completed</label>
+                                    </div>
+
+                                    <div class="edit-form-actions">
+                                      <button type="submit" class="btn btn-save">
+                                        💾 Save Changes
+                                      </button>
+                                      <button type="button" class="btn btn-cancel"
+                                        onclick="toggleEditForm('<%= todo.id %>')">
+                                        ❌ Cancel
+                                      </button>
+                                    </div>
+                                  </form>
+                                </div>
+                          </div>
+                          <% }); %>
+                            <% } %>
+                </div>
+              </div>
+            </div>
   </div>
+
   <script>
-    // You can call your GraphQL API using fetch or Apollo Client here
+    // Toggle edit form visibility
+    function toggleEditForm(todoId) {
+      const form = document.getElementById(`edit-form-${todoId}`);
+      form.classList.toggle('active');
+
+      // Scroll to the form if it's being opened
+      if (form.classList.contains('active')) {
+        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    // Confirm delete action
+    function confirmDelete(todoTitle) {
+      return confirm(`Are you sure you want to delete "${todoTitle}"? This action cannot be undone.`);
+    }
+
+    // Set minimum date for due date inputs
+    document.addEventListener('DOMContentLoaded', function () {
+      const today = new Date().toISOString().split('T')[0];
+      const dueDateInput = document.getElementById('dueDate');
+      if (dueDateInput) {
+        dueDateInput.min = today;
+      }
+
+      // Set min date for all edit form date inputs
+      document.querySelectorAll('input[type="date"][name="dueDate"]').forEach(input => {
+        if (!input.value) {
+          input.min = today;
+        }
+      });
+    });
+
+    // Handle URL parameters for success/error messages
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const success = urlParams.get('success');
+
+    // Auto-hide messages after 5 seconds
+    setTimeout(() => {
+      document.querySelectorAll('.message').forEach(message => {
+        message.style.opacity = '0';
+        message.style.transition = 'opacity 0.5s';
+        setTimeout(() => message.remove(), 500);
+      });
+    }, 5000);
   </script>
 </body>
+
 </html>

@@ -3,8 +3,11 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import  RefreshToken  from "../models/RefreshToken.js";
 import { tokenService } from "./token.service.js";
+import pino from 'pino';
 
 const { JWT_REFRESH_SECRET } = process.env;
+
+const logger = pino();
 
 export const authService = {
   register: async ({ email, password, name }) => {
@@ -27,6 +30,7 @@ export const authService = {
 
     if (!user.isVerified) throw new Error("Email not verified");
 
+    logger.info(`User ${user._id}`);
     const accessToken = tokenService.generateAccessToken({ userId: user._id });
     const refreshToken = tokenService.generateRefreshToken({ userId: user._id });
 
@@ -35,7 +39,7 @@ export const authService = {
       token: refreshToken,
       expiresAt: tokenService.getRefreshTokenExpiryDate(),
     });
-
+  
     return {
       accessToken,
       refreshToken,

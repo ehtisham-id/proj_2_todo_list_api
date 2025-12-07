@@ -7,7 +7,6 @@ import { authDirective, authDirectiveTransformer } from "./directives/auth.direc
 import { authResolver } from "./resolvers/auth.resolver.js";
 import { todoResolver } from "./resolvers/todo.resolver.js";
 import { userResolver } from "./resolvers/user.resolver.js";
-import { ApolloServer } from "@apollo/server";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

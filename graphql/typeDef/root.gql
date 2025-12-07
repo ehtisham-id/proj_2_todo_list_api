@@ -2,7 +2,7 @@ directive @auth on FIELD_DEFINITION
 
 type Query {
   me: User @auth
-  todos: [Todo!] @auth
+  todos: [Todo] @auth
   todo(id: ID!): Todo @auth
 }
 

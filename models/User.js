@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     //for email verification
     isVerified: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     verificationToken: { type: String },
     resetPasswordToken: { type: String },
@@ -43,6 +43,20 @@ userSchema.pre('save', async function (next) {
     next;
 })
 
+// CASCADE DELETE
+userSchema.pre("remove", async function (next) {
+    try {
+        // Delete all todos belonging to this user
+        await Todo.deleteMany({ user: this._id });
+
+        // Delete all refresh tokens belonging to this user
+        await RefreshToken.deleteMany({ user: this._id });
+
+        next;
+    } catch (err) {
+        next;
+    }
+});
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
