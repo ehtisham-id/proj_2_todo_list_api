@@ -1,5 +1,5 @@
-import {mongoose} from 'mongoose';
-import { pino } from 'pino';
+import mongoose from 'mongoose';
+import pino from 'pino';
 
 const logger = pino();
 
@@ -9,8 +9,12 @@ const connectDB = async () => {
         logger.info(`MongoDB Connected: ${conn.connection.host}`);
     } catch (err) {
         logger.error(`Error: ${err.message}`);
-        process.exit(1);
+
+        // Wait 5 seconds before retry
+        await new Promise(resolve => setTimeout(resolve, 5000));
+
+        return connectDB(); // Retry
     }
-}
+};
 
 export default connectDB;

@@ -6,7 +6,6 @@ import RefreshToken from './RefreshToken.js';
 
 const logger = pino();
 
-
 const userSchema = new mongoose.Schema({
     email: {
         type: String,
@@ -42,7 +41,7 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
 
     logger.info(`Password hashed successfully`);
-    next();
+    next;
 })
 
 // CASCADE DELETE: runs when calling userDoc.deleteOne()
@@ -50,21 +49,12 @@ userSchema.pre("deleteOne", { document: true, query: false }, async function (ne
     try {
         await Todo.deleteMany({ user: this._id });
         await RefreshToken.deleteMany({ user: this._id });
-        next();
+        next;
     } catch (err) {
-        next(err);
+        next;
     }
 });
 
-userSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
-    try {
-        await Todo.deleteMany({ user: this._id });
-        await RefreshToken.deleteMany({ user: this._id });
-        next();
-    } catch (err) {
-        next(err);
-    }
-});
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
